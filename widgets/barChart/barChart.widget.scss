@@ -1,0 +1,15 @@
+.chart-placeholder{
+    height: 186px;
+    background: #fafafa;
+    margin: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .chart-placeholder-text{
+        color: #ccc;
+        text-align: center;
+        display: inline-block;
+        padding: 0px 40px;
+    }
+}
