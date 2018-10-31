@@ -15,12 +15,6 @@ exports.widgetsCSS = [
   path.resolve(__dirname, 'widgets', '**', '*.scss')
 ];
 
-exports.runtimeLibraries = function() {
-  return [
-    path.resolve(__dirname, 'runtime', 'js', "Chart.min.js"),
-    path.resolve(__dirname, 'runtime', 'js', "chartjs-ng.js"),
-  ];
-};
 
 exports.runtimeFiles = function() {
   return [

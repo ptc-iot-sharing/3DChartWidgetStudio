@@ -11,7 +11,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
 (function () {
   'use strict';
 
-  function cjsChart() {
+  function cjsChart(tml3dRenderer) {
     var setConfigData = function (rows, labelsField, valuesField) {
       var data = {};
       data.labels = [];
@@ -102,7 +102,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       }
       config.plugins = [{
         // this is where the magic happens where we are transferring the chart onto the 3d Image.
-          afterDraw: function(chart, options) {
+          afterDraw: (chart, options) => {
               tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
           }
       }];
@@ -117,6 +117,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         labelsField: '@',
         valuesField: '@',
         options: '=',
+        imageId: "@",
         autoUpdate: '@',
         delegate: '='
       },
@@ -124,12 +125,12 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       link: function (scope, element, attr) {
         var canvas = scope._canvas = element.find('canvas')[0];
         var ctx = canvas.getContext('2d');
-        scope._chartConfig = newChartConfig(attr.chartType);
+        scope._chartConfig = newChartConfig(attr.chartType, attr.imageId);
 
         var updateChart = _.debounce(function(){
           var data = scope.data;
           if (data && data.length && scope.labelsField && scope.valuesField) {
-            scope._chartConfig = newChartConfig(scope.chartType);
+            scope._chartConfig = newChartConfig(scope.chartType, attr.imageId);
             if (scope.chartType === 'bar') {
               scope._chartConfig.options.scales.xAxes[0].gridLines.display = (scope.options.scales.xAxes[0].gridLines.display === 'true');
               scope._chartConfig.options = scope.options;
@@ -159,6 +160,6 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     };
   }
 
-  var cjsModule = angular.module('chartjs-ng', ['tml3dRenderer']);
-  cjsModule.directive('cjsChart', ['$timeout', cjsChart]);
+  var cjsModule = angular.module('chartjs-ng', []);
+  cjsModule.directive('cjsChart', ['tml3dRenderer', cjsChart]);
 }());

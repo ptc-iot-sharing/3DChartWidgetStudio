@@ -55,7 +55,17 @@ function twx3dTimeSeriesChart() {
   properties.push(Twx3dCommon.getHeightProperty());
   var overlay = Twx3dCommon.arrayToMap(properties);
   overlay.experimentalOneSided = Twx3dCommon.getOneSidedProperty();
-  overlay.placeholder_img = Twx3dCommon.getPlaceHolderImgProperty('/extensions/images/placeholder_img.svg');
+  overlay.placeholder_img = Twx3dCommon.getPlaceHolderImgProperty('/extensions/images/Bar Chart.png');
+
+  overlay.src = {
+    name: 'src',
+    label: 'ves-ar-extension:Resource',
+    datatype: 'resource_url',
+    resource_image: true,
+    default: '/extensions/images/Bar Chart.png',
+    isBindingTarget: true,
+    sortOrder: 1
+  };
 
   var props = Twx3dCommon.new3dProps(overlay);
 
@@ -88,7 +98,7 @@ function twx3dTimeSeriesChart() {
     ],
 
     dependencies: {
-      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs-ng.js'],
+      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs3d-ng.js'],
       angularModules: ['chartjs-ng']
     },
 
