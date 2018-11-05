@@ -18,6 +18,7 @@ exports.widgetsCSS = [
 
 exports.runtimeFiles = function() {
   return [
+    {files: [path.resolve(__dirname, 'runtime', 'images', '*')], dest: 'images'},
   ];
 }
 

@@ -33,14 +33,14 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       this.data = data;
     };
 
-    var newChartConfig = function(chartType, widgetId) {
+    var newChartConfig = function (chartType, widgetId) {
       var config;
       if (chartType === 'timeseries') {
         config = {
           type: 'line',
           data: {},
           options: {
-            responsive: true,
+            responsive: false,
             scales: {
               xAxes: [{
                 type: "time",
@@ -75,7 +75,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
           type: 'bar',
           data: {},
           options: {
-            responsive: true,
+            responsive: false,
             hover: {
               mode: "label"
             },
@@ -102,9 +102,9 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       }
       config.plugins = [{
         // this is where the magic happens where we are transferring the chart onto the 3d Image.
-          afterDraw: (chart, options) => {
-              tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
-          }
+        afterDraw: (chart, options) => {
+          tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
+        }
       }];
       return config;
     };
@@ -121,13 +121,13 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         autoUpdate: '@',
         delegate: '='
       },
-      template: '<canvas style="width:100%;height:100%"></canvas>',
       link: function (scope, element, attr) {
-        var canvas = scope._canvas = element.find('canvas')[0];
-        var ctx = canvas.getContext('2d');
+        var canvas = scope._canvas = document.createElement("canvas");
+        canvas.width = attr.canvasWidth;
+        canvas.height = attr.canvasHeight;
         scope._chartConfig = newChartConfig(attr.chartType, attr.imageId);
 
-        var updateChart = _.debounce(function(){
+        var updateChart = _.debounce(() => {
           var data = scope.data;
           if (data && data.length && scope.labelsField && scope.valuesField) {
             scope._chartConfig = newChartConfig(scope.chartType, attr.imageId);
@@ -136,16 +136,16 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
               scope._chartConfig.options = scope.options;
             }
             // force ticks display (for fixing a bug were some X labels disappear)
-            scope._chartConfig.options.scales.xAxes[0].ticks = {autoSkip: false};
+            scope._chartConfig.options.scales.xAxes[0].ticks = { autoSkip: false };
             // fixing X labels cut off issue. This is a bug in charts.js implementation.
             // 15 was found as the "magic number" to fix this issue regardless of the lable's length.
             scope._chartConfig.options.layout = { padding: { bottom: 15 } };
             scope._chartConfig.setData(data, scope.labelsField, scope.valuesField);
-            scope._chart = new Chart(ctx, scope._chartConfig);
+            scope._chart = new Chart(canvas.getContext('2d'), scope._chartConfig);
           }
         }, 100);
 
-        var group = ['labelsField','valuesField'];
+        var group = ['labelsField', 'valuesField'];
         if (scope.autoUpdate === 'true') {
           group.push('data.lastUpdated');
         }
