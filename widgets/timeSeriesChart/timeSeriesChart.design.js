@@ -75,6 +75,32 @@ function twx3dTimeSeriesChart() {
       sortOrder: 10
     },
     {
+      name: 'title',
+      label: 'ves-basic-web-widgets-extension:Chart Title',
+      datatype: 'string',
+      sortOrder: 11
+    },
+    {
+      name: 'scaleLabelX',
+      label: 'ves-basic-web-widgets-extension:X Axis Label',
+      datatype: 'string',
+      default: 'Timestamp',
+      sortOrder: 12
+    },
+    {
+      name: 'scaleLabelY',
+      label: 'ves-basic-web-widgets-extension:Y Axis Label',
+      datatype: 'string',
+      default: 'Value',
+      sortOrder: 13
+    },
+    {
+      name: 'backgroundColor',
+      label: 'ves-basic-web-widgets-extension:Background Color',
+      datatype: 'color',
+      sortOrder: 14
+    },
+    {
       name: 'canvasheight',
       label: 'Canvas Height',
       datatype: 'number',
@@ -165,6 +191,10 @@ function twx3dTimeSeriesChart() {
         'fills="{{me.fills}}"' +
         'show-lines="{{me.showLines}}"' +
         'line-tensions="{{me.lineTensions}}"' +
+        'title="{{me.title}}" ' +
+        'scale-label-x="{{me.scaleLabelX}}" ' +
+        'scale-label-y="{{me.scaleLabelY}}" ' +
+        'background-color="{{me.backgroundColor}}" ' +
         'twx-native-events>' +
         '</div>' +
         '</div>';

@@ -27,17 +27,9 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                 second: ""
               }
             },
-            scaleLabel: {
-              display: true,
-              labelString: 'Date'
-            }
           }],
           yAxes: [{
             display: true,
-            scaleLabel: {
-              display: true,
-              labelString: 'value'
-            }
           }]
         }
       },
@@ -46,9 +38,6 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       data: {},
       options: {
         responsive: false,
-        hover: {
-          mode: "label"
-        },
         scales: {
           xAxes: [{
             type: "category",
@@ -108,7 +97,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       this.data = data;
     };
 
-    var newChartConfig = function (chartType, widgetId, timeFormat) {
+    function newChartConfig (chartType, widgetId, timeFormat, title, scaleLabelX, scaleLabelY, backgroundColor) {
       var config = chartDefaultConfigs[chartType];
       config.options.scales.xAxes[0].time.displayFormats.second = timeFormat;
       config.plugins = [{
@@ -117,6 +106,34 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
           tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
         }
       }];
+      if(backgroundColor) {
+        config.plugins.push({
+          beforeDraw: (chart) => {
+            var ctx = chart.canvas.getContext('2d');
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, chart.canvas.width, chart.canvas.height);
+            ctx.restore();
+          }
+        })
+      }
+      if(title) {
+        config.options.title = {
+          display: true,
+          text: title
+        }
+      }
+      if(scaleLabelX) {
+        config.options.scales.xAxes[0].scaleLabel = {
+          display: true,
+          labelString: scaleLabelX
+        }
+      }
+      if(scaleLabelY) {
+        config.options.scales.yAxes[0].scaleLabel = {
+          display: true,
+          labelString: scaleLabelY
+        }
+      }
       config.setData = setConfigData;
       return config;
     };
@@ -134,6 +151,10 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         fills: '@',
         showLines: '@',
         lineTensions: '@',
+        title: '@',
+        scaleLabelX: '@',
+        scaleLabelY: '@',
+        backgroundColor: '@',
         options: '=',
         imageId: "@",
         autoUpdate: '@',
@@ -143,7 +164,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         var canvas = scope._canvas = document.createElement("canvas");
         canvas.width = attr.canvasWidth;
         canvas.height = attr.canvasHeight;
-        scope._chartConfig = newChartConfig(attr.chartType, attr.imageId, attr.timeFormat);
+        scope._chartConfig = newChartConfig(attr.chartType, attr.imageId, attr.timeFormat, attr.title, attr.scaleLabelX, attr.scaleLabelY, attr.backgroundColor);
         scope._chart = new Chart(canvas.getContext('2d'), scope._chartConfig);
         var updateChart = () => {
           var data = scope.data;
