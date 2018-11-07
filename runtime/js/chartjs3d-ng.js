@@ -11,6 +11,59 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
 (function () {
   'use strict';
 
+  var chartDefaultConfigs =
+  {
+    timeseries: {
+      type: 'line',
+      data: {},
+      options: {
+        responsive: false,
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'Date'
+            }
+          }],
+          yAxes: [{
+            display: true,
+            scaleLabel: {
+              display: true,
+              labelString: 'value'
+            }
+          }]
+        }
+      },
+    }, bar: {
+      type: 'bar',
+      data: {},
+      options: {
+        responsive: false,
+        hover: {
+          mode: "label"
+        },
+        scales: {
+          xAxes: [{
+            type: "category",
+
+            // Specific to Bar Controller
+            categoryPercentage: 0.8,
+            barPercentage: 0.9,
+
+            // grid line settings
+            gridLines: {
+              offsetGridLines: true,
+            }
+          }],
+          yAxes: [{
+            type: "linear"
+          }]
+        }
+      },
+    }
+  };
+
   function cjsChart(tml3dRenderer) {
     var setConfigData = function (rows, labelsField, valuesField) {
       var data = {};
@@ -19,6 +72,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
 
       var dataset1 = {};
       dataset1.data = [];
+      dataset1.backgroundColor = "red";
 
       dataset1.label = valuesField;
 
@@ -34,78 +88,14 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     };
 
     var newChartConfig = function (chartType, widgetId) {
-      var config;
-      if (chartType === 'timeseries') {
-        config = {
-          type: 'line',
-          data: {},
-          options: {
-            responsive: false,
-            scales: {
-              xAxes: [{
-                type: "time",
-                display: true,
-                time: {
-                  format: 'MM/DD/YYYY HH:mm'
-                  //, round: 'day'
-                },
-                scaleLabel: {
-                  show: true,
-                  labelString: 'Date'
-                }
-              }],
-              yAxes: [{
-                display: true,
-                scaleLabel: {
-                  show: true,
-                  labelString: 'value'
-                }
-              }]
-            },
-            elements: {
-              line: {
-                tension: 0.3
-              }
-            }
-          },
-          setData: setConfigData
-        };
-      } else if (chartType === 'bar') {
-        config = {
-          type: 'bar',
-          data: {},
-          options: {
-            responsive: false,
-            hover: {
-              mode: "label"
-            },
-            scales: {
-              xAxes: [{
-                type: "category",
-
-                // Specific to Bar Controller
-                categoryPercentage: 0.8,
-                barPercentage: 0.9,
-
-                // grid line settings
-                gridLines: {
-                  offsetGridLines: true,
-                }
-              }],
-              yAxes: [{
-                type: "linear"
-              }]
-            }
-          },
-          setData: setConfigData
-        };
-      }
+      var config = chartDefaultConfigs[chartType];
       config.plugins = [{
         // this is where the magic happens where we are transferring the chart onto the 3d Image.
         afterDraw: (chart, options) => {
           tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
         }
       }];
+      config.setData = setConfigData;
       return config;
     };
 
@@ -126,11 +116,10 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         canvas.width = attr.canvasWidth;
         canvas.height = attr.canvasHeight;
         scope._chartConfig = newChartConfig(attr.chartType, attr.imageId);
-
-        var updateChart = _.debounce(() => {
+        scope._chart = new Chart(canvas.getContext('2d'), scope._chartConfig);
+        var updateChart = () => {
           var data = scope.data;
           if (data && data.length && scope.labelsField && scope.valuesField) {
-            scope._chartConfig = newChartConfig(scope.chartType, attr.imageId);
             if (scope.chartType === 'bar') {
               scope._chartConfig.options.scales.xAxes[0].gridLines.display = (scope.options.scales.xAxes[0].gridLines.display === 'true');
               scope._chartConfig.options = scope.options;
@@ -141,15 +130,20 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
             // 15 was found as the "magic number" to fix this issue regardless of the lable's length.
             scope._chartConfig.options.layout = { padding: { bottom: 15 } };
             scope._chartConfig.setData(data, scope.labelsField, scope.valuesField);
-            scope._chart = new Chart(canvas.getContext('2d'), scope._chartConfig);
+            scope._chart.update();
           }
-        }, 100);
+        };
 
         var group = ['labelsField', 'valuesField'];
         if (scope.autoUpdate === 'true') {
           group.push('data.lastUpdated');
         }
-        scope.$watchGroup(group, updateChart);
+        scope.$watchGroup(group, (value) => {
+          // if the data last updated is defined
+          if(value[2]) {
+            updateChart();
+          }
+        });
 
         scope.$watch('delegate', function (delegate) {
           if (delegate) {

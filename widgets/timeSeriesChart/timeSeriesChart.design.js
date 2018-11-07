@@ -7,13 +7,6 @@
 function twx3dTimeSeriesChart() {
   var properties = [
     {
-      name: 'class',
-      label: 'ves-basic-web-widgets-extension:Class',
-      datatype: 'string',
-      //default: '',
-      isBindingTarget: true
-    },
-    {
       name: 'data',
       label: 'ves-basic-web-widgets-extension:Data',
       datatype: 'infotable',
@@ -24,7 +17,7 @@ function twx3dTimeSeriesChart() {
       label: 'ves-basic-web-widgets-extension:Auto Update',
       datatype: 'boolean',
       default: true,
-      isVisible: false
+      isVisible: true
     },
     {
       name: 'labelsField',
@@ -40,12 +33,6 @@ function twx3dTimeSeriesChart() {
       datatype: 'string',
       editor: 'select',
       applyFieldsFromDataSource: 'data',
-      default: ''
-    },
-    {
-      name: 'margin',
-      label: 'ves-basic-web-widgets-extension:Margin',
-      datatype: 'string',
       default: ''
     },
     {
@@ -128,7 +115,6 @@ function twx3dTimeSeriesChart() {
         '<div twx-visible>' +
         '<div ng-hide ng-if="me.data.length" ' +
         'class="chart-size {{me.class}} time-series-chart" ' +
-        'style="margin:' + props.margin + ';" ' +
         'cjs-chart ' +
         'image-id="' + props.widgetId + '" ' +
         'canvas-height="' + props.canvasheight + '" ' +
