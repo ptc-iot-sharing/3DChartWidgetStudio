@@ -21,6 +21,12 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         scales: {
           xAxes: [{
             display: true,
+            type: 'time',
+            time: {
+              displayFormats: {
+                second: ""
+              }
+            },
             scaleLabel: {
               display: true,
               labelString: 'Date'
@@ -64,31 +70,47 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     }
   };
 
+  function convertCsvToArray(list) {
+    return list.split(",").map((el) => el.trim());
+  }
+
   function cjsChart(tml3dRenderer) {
-    var setConfigData = function (rows, labelsField, valuesField) {
+    var setConfigData = function (rows, labelsField, valuesFields, colors, labels, fills, showLines, lineTensions) {
+      var valuesFieldsArray = convertCsvToArray(valuesFields);
+      var labelsArray = convertCsvToArray(labels);
+      var colorsArray = convertCsvToArray(colors);
+      var fillsArray = convertCsvToArray(fills);
+      var showLinesArray = convertCsvToArray(showLines);
+      var lineTensionsArray = convertCsvToArray(lineTensions);
+
       var data = {};
       data.labels = [];
       data.datasets = [];
 
-      var dataset1 = {};
-      dataset1.data = [];
-      dataset1.backgroundColor = "red";
-
-      dataset1.label = valuesField;
-
       var nRows = rows.length;
-      for (var i = 0; i < nRows; i += 1) {
+      for (var i = 0; i < nRows; i++) {
         data.labels.push(rows[i][labelsField]);
-        dataset1.data.push(rows[i][valuesField]);
       }
-
-      data.datasets.push(dataset1);
-
+      for (let j = 0; j < valuesFieldsArray.length; j++) {
+        var dataset = {
+          data: [],
+          label: labelsArray[j],
+          backgroundColor: colorsArray[j],
+          fill: fillsArray[j],
+          lineTension: lineTensionsArray[j],
+          showLine: showLinesArray[j]
+        }
+        for (var i = 0; i < nRows; i++) {
+          dataset.data.push(rows[i][valuesFieldsArray[j]]);
+        }
+        data.datasets.push(dataset);
+      }
       this.data = data;
     };
 
-    var newChartConfig = function (chartType, widgetId) {
+    var newChartConfig = function (chartType, widgetId, timeFormat) {
       var config = chartDefaultConfigs[chartType];
+      config.options.scales.xAxes[0].time.displayFormats.second = timeFormat;
       config.plugins = [{
         // this is where the magic happens where we are transferring the chart onto the 3d Image.
         afterDraw: (chart, options) => {
@@ -105,7 +127,13 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         chartType: '@',
         data: '=',
         labelsField: '@',
-        valuesField: '@',
+        valuesFields: '@',
+        timeFormat: '@',
+        colors: '@',
+        labels: '@',
+        fills: '@',
+        showLines: '@',
+        lineTensions: '@',
         options: '=',
         imageId: "@",
         autoUpdate: '@',
@@ -115,32 +143,27 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         var canvas = scope._canvas = document.createElement("canvas");
         canvas.width = attr.canvasWidth;
         canvas.height = attr.canvasHeight;
-        scope._chartConfig = newChartConfig(attr.chartType, attr.imageId);
+        scope._chartConfig = newChartConfig(attr.chartType, attr.imageId, attr.timeFormat);
         scope._chart = new Chart(canvas.getContext('2d'), scope._chartConfig);
         var updateChart = () => {
           var data = scope.data;
-          if (data && data.length && scope.labelsField && scope.valuesField) {
+          if (data && data.length && scope.labelsField && scope.valuesFields) {
             if (scope.chartType === 'bar') {
               scope._chartConfig.options.scales.xAxes[0].gridLines.display = (scope.options.scales.xAxes[0].gridLines.display === 'true');
               scope._chartConfig.options = scope.options;
             }
-            // force ticks display (for fixing a bug were some X labels disappear)
-            scope._chartConfig.options.scales.xAxes[0].ticks = { autoSkip: false };
-            // fixing X labels cut off issue. This is a bug in charts.js implementation.
-            // 15 was found as the "magic number" to fix this issue regardless of the lable's length.
-            scope._chartConfig.options.layout = { padding: { bottom: 15 } };
-            scope._chartConfig.setData(data, scope.labelsField, scope.valuesField);
+            scope._chartConfig.setData(data, scope.labelsField, scope.valuesFields, scope.colors, scope.labels, scope.fills, scope.showLines, scope.lineTensions);
             scope._chart.update();
           }
         };
 
-        var group = ['labelsField', 'valuesField'];
+        var group = ['labelsField', 'valuesFields'];
         if (scope.autoUpdate === 'true') {
           group.push('data.lastUpdated');
         }
         scope.$watchGroup(group, (value) => {
           // if the data last updated is defined
-          if(value[2]) {
+          if (value[2]) {
             updateChart();
           }
         });

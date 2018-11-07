@@ -10,30 +10,69 @@ function twx3dTimeSeriesChart() {
       name: 'data',
       label: 'ves-basic-web-widgets-extension:Data',
       datatype: 'infotable',
-      isBindingTarget: true
+      isBindingTarget: true,
+      sortOrder: 1
     },
     {
       name: 'autoUpdate',
       label: 'ves-basic-web-widgets-extension:Auto Update',
       datatype: 'boolean',
       default: true,
-      isVisible: true
+      isVisible: true,
+      sortOrder: 2
     },
     {
-      name: 'labelsField',
+      name: 'labelField',
       label: 'ves-basic-web-widgets-extension:X-axis Field',
       datatype: 'string',
       editor: 'select',
       applyFieldsFromDataSource: 'data',
-      default: ''
+      default: '',
+      sortOrder: 3
     },
     {
-      name: 'valuesField',
-      label: 'ves-basic-web-widgets-extension:Y-axis Field',
+      name: 'timeFormat',
+      label: 'ves-basic-web-widgets-extension:Timestamp formatting',
       datatype: 'string',
-      editor: 'select',
-      applyFieldsFromDataSource: 'data',
-      default: ''
+      default: 'MM D YYYY HH:mm:ss',
+      sortOrder: 4
+    },
+    {
+      name: 'valuesFields',
+      label: 'ves-basic-web-widgets-extension:Y-axis Fields (comma separated)',
+      datatype: 'string',
+      default: '',
+      sortOrder: 5
+    },
+    {
+      name: 'colors',
+      label: 'ves-basic-web-widgets-extension:Color of each bar (comma separated)',
+      datatype: 'string',
+      sortOrder: 6
+    },
+    {
+      name: 'labels',
+      label: 'ves-basic-web-widgets-extension:Labels of each bar (comma separated)',
+      datatype: 'string',
+      sortOrder: 7
+    },
+    {
+      name: 'fills',
+      label: 'ves-basic-web-widgets-extension:Fills (comma separated)',
+      datatype: 'string',
+      sortOrder: 8
+    },
+    {
+      name: 'showLines',
+      label: 'ves-basic-web-widgets-extension:ShowLines (comma separated)',
+      datatype: 'string',
+      sortOrder: 9
+    },
+    {
+      name: 'lineTensions',
+      label: 'ves-basic-web-widgets-extension:Interpolations (comma separated)',
+      datatype: 'string',
+      sortOrder: 10
     },
     {
       name: 'canvasheight',
@@ -41,8 +80,7 @@ function twx3dTimeSeriesChart() {
       datatype: 'number',
       default: 1000,
       isBindingTarget: true,
-      alwaysWriteAttribute: true,
-      sortOrder: 123
+      alwaysWriteAttribute: true
     },
     {
       name: 'canvaswidth',
@@ -50,16 +88,13 @@ function twx3dTimeSeriesChart() {
       datatype: 'number',
       default: 1000,
       isBindingTarget: true,
-      alwaysWriteAttribute: true,
-      sortOrder: 124
+      alwaysWriteAttribute: true
     },
     {
       name: 'src',
       label: 'ves-ar-extension:Resource',
       datatype: 'string',
       default: '/extensions/images/Time Series Chart.png',
-      isBindingTarget: true,
-      sortOrder: 1,
       isVisible: false
     }
   ];
@@ -122,8 +157,14 @@ function twx3dTimeSeriesChart() {
         'auto-update="' + props.autoUpdate + '" ' +
         'chart-type="timeseries" ' +
         'data="me.data" ' +
-        'labels-field="{{me.labelsField}}" ' +
-        'values-field="{{me.valuesField}}"' +
+        'labels-field="{{me.labelField}}" ' +
+        'values-fields="{{me.valuesFields}}"' +
+        'time-format="{{me.timeFormat}}"' +
+        'colors="{{me.colors}}"' +
+        'labels="{{me.labels}}"' +
+        'fills="{{me.fills}}"' +
+        'show-lines="{{me.showLines}}"' +
+        'line-tensions="{{me.lineTensions}}"' +
         'twx-native-events>' +
         '</div>' +
         '</div>';
