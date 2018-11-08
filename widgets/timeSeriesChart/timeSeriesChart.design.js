@@ -46,19 +46,25 @@ function twx3dTimeSeriesChart() {
     },
     {
       name: 'colors',
-      label: 'ves-basic-web-widgets-extension:Color of each bar (comma separated)',
+      label: 'ves-basic-web-widgets-extension:Colors of each line (comma separated)',
       datatype: 'string',
       sortOrder: 6
     },
     {
       name: 'labels',
-      label: 'ves-basic-web-widgets-extension:Labels of each bar (comma separated)',
+      label: 'ves-basic-web-widgets-extension:Labels of each line (comma separated)',
       datatype: 'string',
       sortOrder: 7
     },
     {
       name: 'fills',
-      label: 'ves-basic-web-widgets-extension:Fills (comma separated)',
+      label: 'ves-basic-web-widgets-extension:Fills (comma separated, see http://www.chartjs.org/docs/latest/charts/area.html)',
+      datatype: 'string',
+      sortOrder: 8
+    },
+    {
+      name: 'fillColors',
+      label: 'ves-basic-web-widgets-extension:Colors of each fill (comma separated)',
       datatype: 'string',
       sortOrder: 8
     },
@@ -96,8 +102,9 @@ function twx3dTimeSeriesChart() {
     },
     {
       name: 'backgroundColor',
-      label: 'ves-basic-web-widgets-extension:Background Color',
-      datatype: 'color',
+      label: 'ves-basic-web-widgets-extension:Background Color (RGBA ONLY)',
+      datatype: 'string',
+      default: 'rgba(225, 225, 225, 0.5)',
       sortOrder: 14
     },
     {
@@ -173,9 +180,7 @@ function twx3dTimeSeriesChart() {
 
     runtimeTemplate: function (props) {
       var template2d =
-        '<div twx-visible>' +
         '<div ng-hide ng-if="me.data.length" ' +
-        'class="chart-size {{me.class}} time-series-chart" ' +
         'cjs-chart ' +
         'image-id="' + props.widgetId + '" ' +
         'canvas-height="' + props.canvasheight + '" ' +
@@ -189,6 +194,7 @@ function twx3dTimeSeriesChart() {
         'colors="{{me.colors}}"' +
         'labels="{{me.labels}}"' +
         'fills="{{me.fills}}"' +
+        'fill-colors="{{me.fillColors}}"' +
         'show-lines="{{me.showLines}}"' +
         'line-tensions="{{me.lineTensions}}"' +
         'title="{{me.title}}" ' +
@@ -196,7 +202,6 @@ function twx3dTimeSeriesChart() {
         'scale-label-y="{{me.scaleLabelY}}" ' +
         'background-color="{{me.backgroundColor}}" ' +
         'twx-native-events>' +
-        '</div>' +
         '</div>';
       var template3d = runtimeTemplate.replace("#widgetId#", props.widgetId).replace('#src#', props.src);
       return template2d + template3d;

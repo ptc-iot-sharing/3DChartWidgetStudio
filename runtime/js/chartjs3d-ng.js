@@ -59,37 +59,44 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     }
   };
 
-  function convertCsvToArray(list) {
-    return list.split(",").map((el) => el.trim());
+  function convertCsvToArray(list, repeatCount) {
+    var result = list.split(",").map((el) => el.trim());
+    if (result.length == 1 && repeatCount) {
+      result = Array(repeatCount).fill(list.trim());
+    }
+    return result;
   }
 
   function cjsChart(tml3dRenderer) {
-    var setConfigData = function (rows, labelsField, valuesFields, colors, labels, fills, showLines, lineTensions) {
+    var setConfigData = function (rows, labelsField, valuesFields, colors, labels, fills, fillColors, showLines, lineTensions) {
       var valuesFieldsArray = convertCsvToArray(valuesFields);
       var labelsArray = convertCsvToArray(labels);
-      var colorsArray = convertCsvToArray(colors);
-      var fillsArray = convertCsvToArray(fills);
-      var showLinesArray = convertCsvToArray(showLines);
-      var lineTensionsArray = convertCsvToArray(lineTensions);
+      var colorsArray = convertCsvToArray(colors, valuesFieldsArray.length);
+      var fillsArray = convertCsvToArray(fills, valuesFieldsArray.length);
+      var fillColorsArray = convertCsvToArray(fillColors, valuesFieldsArray.length);
+      var showLinesArray = convertCsvToArray(showLines, valuesFieldsArray.length);
+      var lineTensionsArray = convertCsvToArray(lineTensions, valuesFieldsArray.length);
 
-      var data = {};
-      data.labels = [];
-      data.datasets = [];
+      var data = {
+        labels: [],
+        datasets: []
+      };
 
-      var nRows = rows.length;
-      for (var i = 0; i < nRows; i++) {
+      for (var i = 0; i < rows.length; i++) {
         data.labels.push(rows[i][labelsField]);
       }
+
       for (let j = 0; j < valuesFieldsArray.length; j++) {
         var dataset = {
           data: [],
           label: labelsArray[j],
-          backgroundColor: colorsArray[j],
-          fill: fillsArray[j],
-          lineTension: lineTensionsArray[j],
-          showLine: showLinesArray[j]
-        }
-        for (var i = 0; i < nRows; i++) {
+          backgroundColor: fillColorsArray[j],
+          borderColor: colorsArray[j],
+          fill: fillsArray[j] == 'false' ? false : fillsArray[j], // see http://www.chartjs.org/docs/latest/charts/area.html
+          lineTension: parseFloat(lineTensionsArray[j]),
+          showLine: showLinesArray[j] == 'true'
+        };
+        for (var i = 0; i < rows.length; i++) {
           dataset.data.push(rows[i][valuesFieldsArray[j]]);
         }
         data.datasets.push(dataset);
@@ -97,7 +104,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       this.data = data;
     };
 
-    function newChartConfig (chartType, widgetId, timeFormat, title, scaleLabelX, scaleLabelY, backgroundColor) {
+    function newChartConfig(chartType, widgetId, timeFormat, title, scaleLabelX, scaleLabelY, backgroundColor) {
       var config = chartDefaultConfigs[chartType];
       config.options.scales.xAxes[0].time.displayFormats.second = timeFormat;
       config.plugins = [{
@@ -106,29 +113,35 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
           tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
         }
       }];
-      if(backgroundColor) {
+      if (backgroundColor) {
         config.plugins.push({
           beforeDraw: (chart) => {
             var ctx = chart.canvas.getContext('2d');
+            var colorComponents = backgroundColor.split(',');
+            // we have an alpha parameter
+            if (colorComponents[3]) {
+              ctx.globalAlpha = parseFloat(colorComponents[3].trim());
+            }
             ctx.fillStyle = backgroundColor;
             ctx.fillRect(0, 0, chart.canvas.width, chart.canvas.height);
+            ctx.globalAlpha = 1;
             ctx.restore();
           }
         })
       }
-      if(title) {
+      if (title) {
         config.options.title = {
           display: true,
           text: title
         }
       }
-      if(scaleLabelX) {
+      if (scaleLabelX) {
         config.options.scales.xAxes[0].scaleLabel = {
           display: true,
           labelString: scaleLabelX
         }
       }
-      if(scaleLabelY) {
+      if (scaleLabelY) {
         config.options.scales.yAxes[0].scaleLabel = {
           display: true,
           labelString: scaleLabelY
@@ -149,6 +162,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
         colors: '@',
         labels: '@',
         fills: '@',
+        fillColors: '@',
         showLines: '@',
         lineTensions: '@',
         title: '@',
@@ -173,7 +187,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
               scope._chartConfig.options.scales.xAxes[0].gridLines.display = (scope.options.scales.xAxes[0].gridLines.display === 'true');
               scope._chartConfig.options = scope.options;
             }
-            scope._chartConfig.setData(data, scope.labelsField, scope.valuesFields, scope.colors, scope.labels, scope.fills, scope.showLines, scope.lineTensions);
+            scope._chartConfig.setData(data, scope.labelsField, scope.valuesFields, scope.colors, scope.labels, scope.fills, scope.fillColors, scope.showLines, scope.lineTensions);
             scope._chart.update();
           }
         };
