@@ -16,6 +16,9 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     timeseries: {
       type: 'line',
       data: {},
+      animation: {
+        duration: 0
+      },
       options: {
         responsive: false,
         scales: {
@@ -109,7 +112,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       config.options.scales.xAxes[0].time.displayFormats.second = timeFormat;
       config.plugins = [{
         // this is where the magic happens where we are transferring the chart onto the 3d Image.
-        afterDraw: (chart, options) => {
+        afterRender: (chart, options) => {
           tml3dRenderer.setTexture(widgetId, chart.canvas.toDataURL());
         }
       }];
