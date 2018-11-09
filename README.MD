@@ -57,4 +57,4 @@ chartScope._chart.update(); // trigger the update using the new config
 
 ## Known issues
 
-* The widget in studio builder is much bigger than the size when viewing in preview/on devices.
+* ...?

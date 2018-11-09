@@ -170,7 +170,7 @@ function twx3dTimeSeriesChart() {
     ],
 
     dependencies: {
-      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs3d-ng.js', 'images/sample_image.png'],
+      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs3d-ng.js', 'images/sample_image.png', 'images/10x10-ffffffff.png'],
       angularModules: ['chartjs-ng']
     },
 
@@ -203,7 +203,7 @@ function twx3dTimeSeriesChart() {
         'background-color="{{me.backgroundColor}}" ' +
         'twx-native-events>' +
         '</div>';
-      var template3d = runtimeTemplate.replace("#widgetId#", props.widgetId).replace('#src#', props.src);
+      var template3d = runtimeTemplate.replace("#widgetId#", props.widgetId).replace('src="{{me.src}}"', 'src="extensions/images/10x10-ffffffff.png"');
       return template2d + template3d;
     }
   };
