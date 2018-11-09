@@ -1,3 +1,5 @@
+var version = "1.0.0";
+
 var path = require('path');
 
 exports.extensionInfo = {
