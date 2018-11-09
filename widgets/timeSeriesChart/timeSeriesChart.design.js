@@ -104,7 +104,7 @@ function twx3dTimeSeriesChart() {
       name: 'backgroundColor',
       label: 'ves-basic-web-widgets-extension:Background Color (RGBA ONLY)',
       datatype: 'string',
-      default: 'rgba(225, 225, 225, 0.5)',
+      default: 'rgba(0, 0, 0, 0.3)',
       sortOrder: 14
     },
     {
@@ -127,7 +127,7 @@ function twx3dTimeSeriesChart() {
       name: 'src',
       label: 'ves-ar-extension:Resource',
       datatype: 'string',
-      default: '/extensions/images/Time Series Chart.png',
+      default: '/extensions/images/sample_image.png',
       isVisible: false
     }
   ];
@@ -137,7 +137,7 @@ function twx3dTimeSeriesChart() {
   properties.push(Twx3dCommon.getHeightProperty());
   var overlay = Twx3dCommon.arrayToMap(properties);
   overlay.experimentalOneSided = Twx3dCommon.getOneSidedProperty();
-  overlay.placeholder_img = Twx3dCommon.getPlaceHolderImgProperty('/extensions/images/Time Series Chart.png');
+  overlay.placeholder_img = Twx3dCommon.getPlaceHolderImgProperty('/extensions/images/sample_image.png');
 
   var props = Twx3dCommon.new3dProps(overlay);
 
@@ -170,7 +170,7 @@ function twx3dTimeSeriesChart() {
     ],
 
     dependencies: {
-      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs3d-ng.js', 'images/Time Series Chart.png'],
+      files: ['js/moment.min.js', 'js/Chart.min.js', 'js/chartjs3d-ng.js', 'images/sample_image.png'],
       angularModules: ['chartjs-ng']
     },
 

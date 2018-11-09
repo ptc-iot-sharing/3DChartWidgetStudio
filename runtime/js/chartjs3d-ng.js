@@ -21,6 +21,11 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       },
       options: {
         responsive: false,
+        legend: {
+          labels: {
+            fontColor: 'rgb(241, 241, 241)'
+          }
+        },
         scales: {
           xAxes: [{
             display: true,
@@ -30,9 +35,21 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
                 second: ""
               }
             },
+            ticks: {
+              fontColor: 'rgb(241, 241, 241)'
+            },
+            gridLines: {
+              color: 'rgb(210, 210, 210)'
+            }
           }],
           yAxes: [{
             display: true,
+            ticks: {
+              fontColor: 'rgb(241, 241, 241)'
+            },
+            gridLines: {
+              color: 'rgb(210, 210, 210)'
+            }
           }]
         }
       },
@@ -135,19 +152,22 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       if (title) {
         config.options.title = {
           display: true,
-          text: title
+          text: title,
+          fontColor: 'rgb(241, 241, 241)'
         }
       }
       if (scaleLabelX) {
         config.options.scales.xAxes[0].scaleLabel = {
           display: true,
-          labelString: scaleLabelX
+          labelString: scaleLabelX,
+          fontColor: 'rgb(241, 241, 241)'
         }
       }
       if (scaleLabelY) {
         config.options.scales.yAxes[0].scaleLabel = {
           display: true,
-          labelString: scaleLabelY
+          labelString: scaleLabelY,
+          fontColor: 'rgb(241, 241, 241)'
         }
       }
       config.setData = setConfigData;
