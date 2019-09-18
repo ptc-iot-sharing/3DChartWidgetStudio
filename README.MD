@@ -8,7 +8,7 @@ At the moment, only the timeseries widget is supported.
 
 To use the charts follow the next steps:
 
-* Download the latest version from the [releases page](http://roicentersvn.ptcnet.ptc.com/placatus/Studio3DChartJsWidget/releases).
+* Download the latest version from the by simply downloading the entire repository (green _Clone and Download button_ in the upper right corner. Chose download as ZIP).
 * Unzip the package under `DOCUMENTS__FOLDER\VuforiaStudio\Extensions`. The end result should be that you have a `index.js` at the folowing path: `VuforiaStudio\Extensions\3dChart\index.js`.
 * Restart Vuforia Studio if already running.
 
